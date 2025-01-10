@@ -1,0 +1,2 @@
+curl -s -S -L 'https://raw.githubusercontent.com/check-spelling/check-spelling/v0.0.24/apply.pl' |
+perl - 'https://github.com/denelon/winget-dsc/actions/runs/12701218154/attempts/1'
