@@ -16,6 +16,7 @@ properties:
       id: WindowsSandbox
       directives:
         description: Ensure Windows Sandbox is enabled
+        securityContext: elevated
       settings:
         Name: Containers-DisposableClientVM
         Ensure: Present
