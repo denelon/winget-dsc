@@ -12,7 +12,7 @@ The dscv3 processor brings several improvements:
 
 ## Prerequisites
 
-- **WinGet v1.29+** with DSC v3 support
+- **WinGet v1.28+** with DSC v3 support
 - **DSC v3** installed on the system
 - **PowerShell 7** for module installs and script resources
 
@@ -145,21 +145,21 @@ Key differences:
 
 ## Conversion Checklist
 
-1. ☐ Update document structure (`$schema`, `metadata.winget.processor`, remove `properties:` wrapper)
-2. ☐ Rename all fields (`resource`→`type`, `id`→`name`, `settings`→`properties`, `directives`→`metadata`)
-3. ☐ Update resource type names (`Microsoft.WinGet.DSC/WinGetPackage` → `Microsoft.WinGet/Package`)
-4. ☐ Add `useLatest: true` to all package resources
-5. ☐ Check each package's WinGet manifest for `ElevationRequirement` before adding `securityContext: elevated`
-6. ☐ **Convert all `PSDscResources/Registry` to native `Microsoft.Windows/Registry`**
-7. ☐ Add module install resources for adapted class-based DSC resources
-8. ☐ Use `Install-PSResource` (not `Install-Module`) for module installs
-9. ☐ Check PowerShell Gallery for each module — only use `-Prerelease` when no stable version exists
-10. ☐ Add `dependsOn` from each adapted resource to its module install resource
-11. ☐ Convert `PSDscResources/Script` to `RunCommandOnSet` (or script alternatives)
-12. ☐ Update `dependsOn` references to use PascalCase `name:` values
-13. ☐ Apply `securityContext: elevated` only where truly required
-14. ☐ Remove `allowPrerelease: true` from resource metadata (v2 directive, not used in v3)
-15. ☐ Remove `PSDscResources.Module` install if all Registry resources use native v3
+- [ ] Update document structure (`$schema`, `metadata.winget.processor`, remove `properties:` wrapper)
+- [ ] Rename all fields (`resource`→`type`, `id`→`name`, `settings`→`properties`, `directives`→`metadata`)
+- [ ] Update resource type names (`Microsoft.WinGet.DSC/WinGetPackage` → `Microsoft.WinGet/Package`)
+- [ ] Add `useLatest: true` to all package resources
+- [ ] Check each package's WinGet manifest for `ElevationRequirement` before adding `securityContext: elevated`
+- [ ] **Convert all `PSDscResources/Registry` to native `Microsoft.Windows/Registry`**
+- [ ] Add module install resources for adapted class-based DSC resources
+- [ ] Use `Install-PSResource` (not `Install-Module`) for module installs
+- [ ] Check PowerShell Gallery for each module — only use `-Prerelease` when no stable version exists
+- [ ] Add `dependsOn` from each adapted resource to its module install resource
+- [ ] Convert `PSDscResources/Script` to `RunCommandOnSet` (or script alternatives)
+- [ ] Update `dependsOn` references to use PascalCase `name:` values
+- [ ] Apply `securityContext: elevated` only where truly required
+- [ ] Remove `allowPrerelease: true` from resource metadata (v2 directive, not used in v3)
+- [ ] Remove `PSDscResources.Module` install if all Registry resources use native v3
 
 ## Using the Copilot CLI Skill
 
