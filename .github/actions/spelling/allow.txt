@@ -4,6 +4,8 @@ appwiz
 appx
 arp
 aspnetcore
+azp
+azurepipelines
 bbwe
 checkbox
 checkboxes
