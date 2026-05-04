@@ -4,6 +4,8 @@ appwiz
 appx
 arp
 aspnetcore
+azp
+azurepipelines
 bbwe
 checkbox
 checkboxes
@@ -23,7 +25,7 @@ ephemoral
 esbenp
 Fancyzones
 formulahendry
-fynn
+fYnn
 gdk
 github
 gitversion
@@ -33,6 +35,7 @@ Hmmss
 https
 Icm
 inaries
+JSLTS
 ionide
 JDK
 jquery
@@ -56,6 +59,7 @@ nonexistentpackage
 numpy
 NVM
 opencode
+onboarding
 opensource
 pkief
 powertoys
@@ -109,3 +113,4 @@ DWM
 tzautoupdate
 Usb
 WSL
+Ynn
