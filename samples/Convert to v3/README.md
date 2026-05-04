@@ -173,8 +173,8 @@ Copy the skill file to your Copilot CLI skills directory:
 # Create the skill directory
 New-Item -ItemType Directory -Path "$HOME/.copilot/skills/winget-config-v2-to-v3" -Force
 
-# Copy the skill file
-Copy-Item "SKILL.md" "$HOME/.copilot/skills/winget-config-v2-to-v3/SKILL.md"
+# Copy the skill file (run from the samples/Convert to v3 directory of this repo)
+Copy-Item "./SKILL.md" "$HOME/.copilot/skills/winget-config-v2-to-v3/SKILL.md"
 ```
 
 ### Usage
