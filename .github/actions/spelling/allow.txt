@@ -4,6 +4,8 @@ appwiz
 appx
 arp
 aspnetcore
+azp
+azurepipelines
 bbwe
 checkbox
 checkboxes
@@ -33,6 +35,7 @@ Hmmss
 https
 Icm
 inaries
+JSLTS
 ionide
 JDK
 jquery
