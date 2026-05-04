@@ -6,7 +6,7 @@
 #                                                                                                        #
 # This will:                                                                                             #
 #     * Install Visual Studio Professional 2022                                                             #
-#     * Install .NET web development and ASP.NET workloads to Visual Studio Community 2022               #
+#     * Install .NET web development and ASP.NET workloads to Visual Studio Professional 2022            #
 #                                                                                                        #
 ##########################################################################################################
 
