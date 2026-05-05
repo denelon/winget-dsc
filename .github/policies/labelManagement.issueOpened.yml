@@ -56,11 +56,6 @@ configuration:
           - addLabel:
               label: Needs-Triage
       - description: >-
-          When a pull request is opened, if the files match DevOpsPipelineDefinitions/*
-          * Add a message to the author
-          * Assign to the author
-          * Add the "Needs-Author-Feedback" label
-      - description: >-
           When a PR is opened/updated, if the content is in a project folder and user is not repo admin
           * Add Project-File label
         if:
