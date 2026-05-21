@@ -28,7 +28,7 @@ Examples for a few specific DSC Resources are under the [DscResources](./DscReso
 
 ### Converting v2 to v3
 
-If you have existing v2 configuration files and want to convert them to the dscv3 processor syntax, see the [Convert to v3](./Convert%20to%20v3/) guide. It includes a step-by-step conversion reference, a checklist, and a [GitHub Copilot CLI](https://docs.github.com/copilot/github-copilot-in-the-cli) skill that automates the conversion process.
+If you have existing v2 configuration files and want to convert them to the dscv3 processor syntax, see the [Convert to v3](./Convert%20to%20v3/) guide. It includes a step-by-step conversion reference, a checklist, and a GitHub Copilot CLI [skill](./Convert%20to%20v3/SKILL.md) that automates the conversion process.
 
 ### Create your own
 
