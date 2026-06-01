@@ -89,6 +89,7 @@ Apply these renames to every resource:
 | `Microsoft.WinGet.DSC/WinGetPackage` | `Microsoft.WinGet/Package` | Renamed |
 | `PSDscResources/Registry` | **`Microsoft.Windows/Registry`** | **Use native v3 resource — dramatically faster** |
 | `PSDscResources/Script` | `Microsoft.DSC.Transitional/RunCommandOnSet` | Or `PowerShellScript`/`WindowsPowerShellScript` if test support needed |
+| `PSDscResources/WindowsOptionalFeature` | `Microsoft.Windows/OptionalFeatureList` | Native v3, batch multiple features in one resource |
 | `Microsoft.Windows.Developer/*` | `Microsoft.Windows.Developer/*` | Unchanged (adapted resource, requires module install) |
 | `Microsoft.Windows.Settings/*` | `Microsoft.Windows.Settings/*` | Unchanged (adapted resource, requires module install) |
 
@@ -417,6 +418,48 @@ Fixed overhead for dscv3 processor startup is approximately 23 seconds.
 > is the single highest-impact optimization when converting a v2 config to v3. A config with
 > 22 registry keys drops from 30+ minutes to under 2 minutes for registry evaluation alone.
 > This also eliminates the need to install the PSDscResources PowerShell module.
+
+## Windows Optional Features (`Microsoft.Windows/OptionalFeatureList`)
+
+A native v3 resource (no adapter needed) for enabling/disabling Windows Optional Features.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `features` | array | List of feature objects |
+| `features[].featureName` | string | Windows feature name |
+| `features[].state` | enum | `Installed`, `NotPresent`, `Removed` |
+
+**Common feature names** (not intuitive — use these exact strings):
+- `Containers-DisposableClientVM` → Windows Sandbox
+- `Microsoft-Hyper-V-All` → Hyper-V (all components)
+- `VirtualMachinePlatform` → Virtual Machine Platform
+- `Microsoft-Windows-Subsystem-Linux` → WSL
+
+```yaml
+- type: Microsoft.Windows/OptionalFeatureList
+  name: WindowsFeatures
+  properties:
+    features:
+    - featureName: Containers-DisposableClientVM
+      state: Installed
+    - featureName: Microsoft-Hyper-V-All
+      state: Installed
+  metadata:
+    winget:
+      securityContext: elevated
+    description: Enable Windows Sandbox and Hyper-V
+```
+
+**v2 equivalent** uses `PSDscResources/WindowsOptionalFeature` (one resource per feature).
+
+## Operational Notes for Testing and Automation
+
+- **v2 module caching:** WinGet v2 caches modules at `%LOCALAPPDATA%\Microsoft\WinGet\Configuration\Modules\` — separate from `$env:PSModulePath`. Modules here can become stale.
+- **v3 uses standard PS paths:** The dscv3 processor uses `$env:PSModulePath`. Modules must be installed explicitly via `Install-PSResource` in a `RunCommandOnSet` resource before use.
+- **Concurrent operations blocked:** Never run two `winget configure` commands simultaneously — WinGet prevents parallel runs.
+- **`--disable-interactivity`** does not suppress the progress spinner. Stdout is flooded with ANSI sequences.
+- **Adapter resources work in v3:** dscv3 processor handles PowerShell adapter resources (GitDsc, StorageDsc, etc.) when modules are in the standard PS path.
+- **PowerToys:** v2 DSC resources are deprecated. Use native v3 `Microsoft.PowerToys/*` resources.
 
 ## Conversion Checklist
 
