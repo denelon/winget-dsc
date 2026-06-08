@@ -15,13 +15,15 @@ function Assert-Npm {
 function Invoke-Npm {
     param (
         [Parameter(Mandatory = $true)]
-        [string]$Command
+        [string[]]$Command
     )
-    $value = Invoke-Expression -Command "npm $Command"
+
+    $argList = @($Command | Where-Object { -not [string]::IsNullOrEmpty($_) })
+    $value = & npm @argList
 
     if ($LASTEXITCODE -ne 0) {
         $errors = Get-NpmErrorMessages -LogPath (GetNpmPath)
-        throw "Command 'npm $($Command.Trim())' failed: $($errors -join '; ')"
+        throw "Command 'npm $($argList -join ' ')' failed: $($errors -join '; ')"
     }
 
     return $value
@@ -66,20 +68,24 @@ function Install-NpmPackage {
         [bool]$Global,
 
         [Parameter()]
-        [string]$Arguments
+        [string[]]$Arguments
     )
 
     $command = [List[string]]::new()
     $command.Add('install')
-    $command.Add($PackageName)
+    if (-not [string]::IsNullOrEmpty($PackageName)) {
+        $command.Add($PackageName)
+    }
 
     if ($Global) {
         $command.Add('-g')
     }
 
-    $command.Add($Arguments)
+    foreach ($a in ($Arguments | Where-Object { $_ })) {
+        $command.Add($a)
+    }
 
-    Write-Verbose -Message "Executing 'npm $command'"
+    Write-Verbose -Message "Executing 'npm $($command -join ' ')'"
 
     return Invoke-Npm -Command $command
 }
@@ -93,7 +99,7 @@ function Uninstall-NpmPackage {
         [bool]$Global,
 
         [Parameter()]
-        [string]$Arguments
+        [string[]]$Arguments
     )
 
     $command = [List[string]]::new()
@@ -104,9 +110,11 @@ function Uninstall-NpmPackage {
         $command.Add('-g')
     }
 
-    $command.Add($Arguments)
+    foreach ($a in ($Arguments | Where-Object { $_ })) {
+        $command.Add($a)
+    }
 
-    Write-Verbose -Message "Executing 'npm $command'"
+    Write-Verbose -Message "Executing 'npm $($command -join ' ')'"
 
     return Invoke-Npm -Command $command
 }
@@ -120,7 +128,7 @@ function GetNpmPath {
         } elseif (Test-Path $globalNpmCacheDir -ErrorAction SilentlyContinue) {
             return $globalNpmCacheDir
         } else {
-            $result = (Invoke-Npm -Command 'config list --json' | ConvertFrom-Json -ErrorAction SilentlyContinue).cache
+            $result = (Invoke-Npm -Command @('config', 'list', '--json') | ConvertFrom-Json -ErrorAction SilentlyContinue).cache
             if (Test-Path $result -ErrorAction SilentlyContinue) {
                 return $result
             } else {
@@ -216,7 +224,8 @@ enum Ensure {
         The directory containing the `package.json` file. If not specified, the current directory is used.
 
     .PARAMETER Arguments
-        Additional arguments to pass to `npm install`.
+        Additional arguments to pass to `npm install`, provided as an array of strings where each
+        element is a separate argument.
 
     .EXAMPLE
         Invoke-DscResource -ModuleName NpmDsc -Name NpmInstall -Method Set -Property @{
@@ -240,7 +249,7 @@ class NpmInstall {
     [string]$PackageDirectory
 
     [DscProperty()]
-    [string]$Arguments
+    [string[]]$Arguments
 
     [NpmInstall] Get() {
         Assert-Npm
@@ -308,7 +317,8 @@ class NpmInstall {
     Indicates whether the npm package should be installed globally.
 
 .PARAMETER Arguments
-    Additional arguments to pass to `npm install` or `npm uninstall`.
+    Additional arguments to pass to `npm install` or `npm uninstall`, provided as an array of strings
+    where each element is a separate argument.
 
 .EXAMPLE
     PS C:\> Invoke-DscResource -ModuleName NpmDsc -Name NpmPackage -Method Set -Property @{ Name = 'react' }
@@ -343,7 +353,7 @@ class NpmPackage {
     [bool]$Global
 
     [DscProperty()]
-    [string]$Arguments
+    [string[]]$Arguments
 
     [NpmPackage] Get() {
         Assert-Npm
@@ -399,7 +409,7 @@ class NpmPackage {
     static [NpmPackage[]] Export() {
         $packages = Get-InstalledNpmPackages -Global $true | ConvertFrom-Json -AsHashtable | Select-Object -ExpandProperty dependencies
         $out = [List[NpmPackage]]::new()
-        $globalDir = (Join-Path -Path (Invoke-Npm -Command 'config get prefix') -ChildPath 'node_modules')
+        $globalDir = (Join-Path -Path (Invoke-Npm -Command @('config', 'get', 'prefix')) -ChildPath 'node_modules')
         foreach ($package in $packages.GetEnumerator()) {
             $in = [NpmPackage]@{
                 Name             = $package.Name
@@ -418,7 +428,7 @@ class NpmPackage {
 
     [string] WhatIf() {
         if ($this.Ensure -eq [Ensure]::Present) {
-            $whatIfState = Install-NpmPackage -PackageName $this.Name -Global $this.Global -Arguments '--dry-run'
+            $whatIfState = Install-NpmPackage -PackageName $this.Name -Global $this.Global -Arguments @('--dry-run')
 
             $out = @{
                 Name      = $this.Name
